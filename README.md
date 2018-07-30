@@ -10,9 +10,9 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);
+  digitalWrite(LED, HIGH);
   delay(500);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED, LOW);
   delay(500);
 }
 ```
@@ -31,9 +31,9 @@ void setup() {
 void loop() {
   buttonState = digitalRead(buttonPin);
   if (buttonState == LOW) {
-    digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite(LED, HIGH);
   } else {           
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(LED, LOW);
   }
   delay(500);
 }
