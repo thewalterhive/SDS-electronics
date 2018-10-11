@@ -152,3 +152,109 @@ void sendCommand(int8_t command, int16_t dat) {
   }
 }
 ```
+
+#Rainbow rampup
+
+```
+const int buttonPin = 2;
+int buttonState = 0;
+int buttonStateOld = 0;
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+  #include <avr/power.h>
+#endif
+
+#define LOVE 8
+#define LOVE_LED 5
+#define ON 6
+#define ON_LED 5
+
+Adafruit_NeoPixel love = Adafruit_NeoPixel(LOVE_LED, LOVE, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel on = Adafruit_NeoPixel(ON_LED, ON, NEO_GRB + NEO_KHZ800);
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);
+  love.begin();
+  love.show();
+  on.begin();
+  on.show();
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  buttonState = digitalRead(buttonPin);
+  
+  if (buttonState == LOW) {
+    if (buttonStateOld == HIGH) {
+      flashWhite();
+      buttonStateOld = buttonState;
+    } else {
+      solidWhite();
+      rainbowCycle(5);
+      delay(2000);
+    }
+  } else {
+    buttonStateOld = digitalRead(buttonPin);
+    pinkout();
+    blackout();
+  }
+}
+
+void flashWhite() {
+  for(int i=0; i<6; i++) {
+    for(int p=0; p<ON_LED; p++) {
+      on.setPixelColor(p, 150, 150, 150);
+    }
+    on.show();
+    delay(250);
+    blackout();
+    delay(250);
+  }
+}
+
+void solidWhite() {
+    for(int i=0; i<ON_LED; i++) {
+    on.setPixelColor(i, 255, 255, 255);
+  }
+  on.show();
+}
+
+void pinkout() {
+  for(int i=0; i<LOVE_LED; i++) {
+    love.setPixelColor(i, 50, 50, 50);
+  }
+  love.show();
+}
+
+void blackout() {
+  for(int i=0; i<ON_LED; i++) {
+    on.setPixelColor(i, 0, 0, 0);
+  }
+  on.show();
+}
+
+uint32_t Wheel(byte WheelPos) {
+  WheelPos = 255 - WheelPos;
+  if(WheelPos < 85) {
+    return love.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  }
+  if(WheelPos < 170) {
+    WheelPos -= 85;
+    return love.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  }
+  WheelPos -= 170;
+  return love.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+}
+
+void rainbowCycle(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
+    for(i=0; i< love.numPixels(); i++) {
+      love.setPixelColor(i, Wheel(((i * 256 / love.numPixels()) + j) & 255));
+    }
+    love.show();
+    delay(wait);
+  }
+}
+```
