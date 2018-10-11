@@ -153,7 +153,7 @@ void sendCommand(int8_t command, int16_t dat) {
 }
 ```
 
-#Rainbow rampup
+# Rainbow rampup
 
 ```
 const int buttonPin = 2;
